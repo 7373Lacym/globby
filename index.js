@@ -4,6 +4,8 @@ var arrayUnion = require('array-union');
 var objectAssign = require('object-assign');
 var glob = require('glob');
 var pify = require('pify');
+var gitignore = require('parse-gitignore');
+var isGlob = require('is-glob');
 
 var globP = pify(glob, Promise).bind(glob);
 
@@ -85,4 +87,15 @@ module.exports.hasMagic = function (patterns, opts) {
 	return [].concat(patterns).some(function (pattern) {
 		return glob.hasMagic(pattern, opts);
 	});
+};
+
+module.exports.file = function () {
+	var results;
+	var items = gitignore('.gitignore', 'utf8');
+	for (var glob in items) {
+		if (isGlob(glob)) {
+			results.push(glob);
+		}
+	}
+	return results;
 };

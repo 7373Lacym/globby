@@ -76,6 +76,11 @@ test('expose hasMagic', t => {
 	t.false(m.hasMagic(['path1', 'path2']));
 });
 
+test('file', t => {
+	m.file();
+	t.true(true);
+});
+
 // rejected for being an invalid pattern
 [
 	{},
