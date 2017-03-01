@@ -13,11 +13,13 @@ const fixture = [
 
 test.before(() => {
 	fs.mkdirSync('tmp');
+	fs.mkdirSync('other_pattern');
 	fixture.forEach(fs.writeFileSync.bind(fs));
 });
 
 test.after(() => {
 	fs.rmdirSync('tmp');
+	fs.rmdirSync('other_pattern');
 	fixture.forEach(fs.unlinkSync.bind(fs));
 });
 
@@ -76,11 +78,6 @@ test('expose hasMagic', t => {
 	t.false(m.hasMagic(['path1', 'path2']));
 });
 
-test('file', t => {
-	m.file();
-	t.true(true);
-});
-
 // rejected for being an invalid pattern
 [
 	{},
@@ -118,5 +115,17 @@ test('file', t => {
 	test(`generateGlobTasks throws for invalid patterns input: ${valstring}`, t => {
 		t.throws(() => m.generateGlobTasks(v), TypeError);
 		t.throws(() => m.generateGlobTasks(v), msg);
+	});
+});
+
+test('getFileProp', t => {
+	fs.writeFile('.tmpgitignore', 'pattern \n other_pattern', function (err) {
+		if (err) {
+			return console.log(err);
+		}
+	});
+	t.true(true);
+	m(['tmp', 'other_pattern'], {files: '.tmpgitignore'}).then(paths => {
+		t.deepEqual(paths, ['tmp', 'other_pattern']);
 	});
 });

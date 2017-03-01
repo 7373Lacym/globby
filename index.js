@@ -1,11 +1,10 @@
 'use strict';
+var fs = require('fs');
 var Promise = require('pinkie-promise');
 var arrayUnion = require('array-union');
 var objectAssign = require('object-assign');
 var glob = require('glob');
 var pify = require('pify');
-var gitignore = require('parse-gitignore');
-var isGlob = require('is-glob');
 
 var globP = pify(glob, Promise).bind(glob);
 
@@ -59,7 +58,17 @@ function generateGlobTasks(patterns, opts) {
 
 module.exports = function (patterns, opts) {
 	var globTasks;
-
+	if (typeof opts !== 'undefined') {
+		var hasFilesProperty = Object.prototype.hasOwnProperty.call(opts, 'files');
+		if (hasFilesProperty) {
+			fs.readFile(opts.files, 'utf8', function (err, contents) {
+				contents = contents.split('\n');
+				contents.forEach(function (element) {
+					patterns.push(element);
+				});
+			});
+		}
+	}
 	try {
 		globTasks = generateGlobTasks(patterns, opts);
 	} catch (err) {
@@ -89,13 +98,3 @@ module.exports.hasMagic = function (patterns, opts) {
 	});
 };
 
-module.exports.file = function () {
-	var results;
-	var items = gitignore('.gitignore', 'utf8');
-	for (var glob in items) {
-		if (isGlob(glob)) {
-			results.push(glob);
-		}
-	}
-	return results;
-};
