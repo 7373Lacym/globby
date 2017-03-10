@@ -13,13 +13,11 @@ const fixture = [
 
 test.before(() => {
 	fs.mkdirSync('tmp');
-	fs.mkdirSync('other_pattern');
 	fixture.forEach(fs.writeFileSync.bind(fs));
 });
 
 test.after(() => {
 	fs.rmdirSync('tmp');
-	fs.rmdirSync('other_pattern');
 	fixture.forEach(fs.unlinkSync.bind(fs));
 });
 
@@ -119,13 +117,14 @@ test('expose hasMagic', t => {
 });
 
 test('getFileProp', t => {
-	fs.writeFile('.tmpgitignore', 'pattern \n other_pattern', function (err) {
+	fs.writeFile('.tmpgitignore', 'wrong thing', function (err) {
 		if (err) {
 			return console.log(err);
 		}
 	});
 	t.true(true);
-	m(['tmp', 'other_pattern'], {files: '.tmpgitignore'}).then(paths => {
+	m(['tmp'], {files: '.tmpgitignore'}).then(paths => {
 		t.deepEqual(paths, ['tmp', 'other_pattern']);
 	});
+	fs.unlinkSync('.tmpgitignore');
 });

@@ -62,6 +62,10 @@ module.exports = function (patterns, opts) {
 		var hasFilesProperty = Object.prototype.hasOwnProperty.call(opts, 'files');
 		if (hasFilesProperty) {
 			fs.readFile(opts.files, 'utf8', function (err, contents) {
+				if (err) {
+					console.log(err);
+					return;
+				}
 				contents = contents.split('\n');
 				contents.forEach(function (element) {
 					patterns.push(element);

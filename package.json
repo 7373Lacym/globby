@@ -54,9 +54,7 @@
   "dependencies": {
     "array-union": "^1.0.1",
     "glob": "^7.0.3",
-    "is-glob": "^3.1.0",
     "object-assign": "^4.0.1",
-    "parse-gitignore": "^0.3.1",
     "pify": "^2.0.0",
     "pinkie-promise": "^2.0.0"
   },
